@@ -25,32 +25,30 @@ class DB {
   viewDepartments() {
     return this.connection.query("SELECT * FROM department;");
   }
-  
+
   //add functions
   addEmployees(newperson) {
-    console.log("newperson2");
-    console.log(newperson);
-    return this.connection.query(
-      "INSERT INTO employee (first_name, last_name, role_id, manager_id) VALUES (employee.first_name, employee.last_name, employee.role_id, employee.manager_id);"
-    );
+    return this.connection.query("INSERT INTO employee SET ?", newperson);
   }
 
   addRoles(newrole) {
-    return this.connection.query(
-      "INSERT INTO role (title, salary, department_id) VALUES (role.title, role.salary, role.department_id);"
-    );
+    return this.connection.query("INSERT INTO role SET ?", newrole);
   }
 
   addDepartments(newdepartment) {
-    return this.connection.query(
-      "INSERT INTO department (name) VALUES (department.name);"
-    );
+    return this.connection.query("INSERT INTO department SET ?", newdepartment);
   }
 
   //   //update functions
-  //   updateEmployees() {
-  //     return this.connection.query("SELECT * FROM employee;");
-  //   }
+  retrieveEmployees(employeeId) {
+    return this.connection.query(
+      "SELECT * FROM employee WHERE employee.id = employeeId;"
+    );
+  }
+
+  updateEmployees() {
+    return this.connection.query("SELECT * FROM employee;");
+  }
 
   //   updateRoles() {
   //     return this.connection.query("SELECT * FROM role;");

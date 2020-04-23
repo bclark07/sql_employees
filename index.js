@@ -4,14 +4,6 @@ const db = require("./db"); //defaults to pull index file
 // console.table([2], ["one", "two"]); //displaying a formatted table in the console
 // alternative console-table-printer node package like this:
 require("console.table");
-// const VIEW_EMPLOYEES_BY_DEPARTMENT = "VIEW_EMPLOYEES_BY_DEPARTMENT";
-// const VIEW_EMPLOYEES_BY_MANAGER = "VIEW_EMPLOYEES_BY_MANAGER";
-// const UPDATE_EMPLOYEE_ROLES = "UPDATE_EMPLOYEE_ROLES";
-// const BUDGET = "BUDGET";
-
-// const Add = require("./lib/create");
-// const Update = require("./lib/update");
-// const Remove = require("./lib/remove");
 
 async function WhatToDo() {
   //loadMainPrompts in example
@@ -27,8 +19,9 @@ async function WhatToDo() {
       //have an additional choice to select the employee, role, or department you want to update
       "View an employee, role, or department record",
       "Add an employee, role, or department record",
-      "Update an employee, role, or department record",
-      "Delete an employee, role, or department record",
+      "Update an employee record",
+      // "Update an employee, role, or department record",
+      // "Delete an employee, role, or department record",
       "Exit",
     ],
   });
@@ -64,7 +57,6 @@ async function WhatToDo() {
       break;
     case "Add an employee, role, or department record":
       console.log("add");
-      // return viewEmployees();
       const add = await prompt([
         {
           name: "WhoAdd",
@@ -88,48 +80,37 @@ async function WhatToDo() {
             return addDepartment();
         }
       });
-      // WhatToDo();
-      // return add;
       break;
-    case "Update an employee, role, or department record":
+    // case "Update an employee, role, or department record":
+    case "Update an employee record":
       console.log("update");
-      // class Server extends Update {
-      //   constructor() {
-      const change = await prompt([
-        {
-          name: "WhoUpdate",
-          type: "list",
-          message: "What would you like to update?",
-          choices: ["An employee", "A role", "A department"],
-        },
-      ]).then(async function (change) {
-        // ]).then(function(change) { //stuff when pull from class file
-        // super(change);
-        console.log(WhoUpdate);
-      });
-      break;
-    // .then(async function(change) {
-    // const something = new Update(change);
-    //     console.log(Update(change.WhoUpdate));
-    //   });
-    // WhatToDo();
-    // return change;
+      return updateEmployee();
+    // const change = await prompt([
+    //   {
+    //     name: "WhoUpdate",
+    //     type: "list",
+    //     message: "What would you like to update?",
+    //     choices: ["An employee", "A role", "A department"],
+    //   },
+    // ]).then(async function (change) {
 
-    case "Delete an employee, role, or department record":
-      console.log("delete");
-      const remove = await prompt([
-        {
-          name: "WhoDelete",
-          message: "What would you like to delete?",
-          type: "list",
-          choices: ["An employee", "A role", "A department"],
-        },
-      ]).then(async function (remove) {
-        console.log(Remove(remove.WhoDelete));
-      });
-      // WhatToDo();
-      // return remove;
-      break;
+    //   console.log(WhoUpdate);
+    // });
+    // break;
+
+    // case "Delete an employee, role, or department record":
+    //   console.log("delete");
+    //   const remove = await prompt([
+    //     {
+    //       name: "WhoDelete",
+    //       message: "What would you like to delete?",
+    //       type: "list",
+    //       choices: ["An employee", "A role", "A department"],
+    //     },
+    //   ]).then(async function (remove) {
+    //     console.log(Remove(remove.WhoDelete));
+    //   });
+    //   break;
     case "Exit":
       console.log("exit");
       db.connection.end();
@@ -214,6 +195,7 @@ async function addEmployee() {
   ]);
 
   employee.manager_id = managerId;
+
   console.log("newperson");
   console.log(employee);
   await db.addEmployees(employee);
@@ -234,8 +216,9 @@ async function addRole() {
     },
   ]);
 
-  const departmentChoices = departments.map(({ name }) => ({
+  const departmentChoices = departments.map(({ id, name }) => ({
     name: name,
+    value: id,
   }));
 
   const { deptId } = await prompt([
@@ -267,6 +250,45 @@ async function addDepartment() {
   console.log(department.name);
   await db.addDepartments(department);
   WhatToDo();
+}
+
+//update function
+
+async function updateEmployee() {
+  const employees = await db.viewEmployees();
+
+  const employeeChoices = employees.map(({ id, first_name, last_name }) => ({
+    name: first_name + " " + last_name,
+    value: id,
+  }));
+
+  //shifts array so zero spot has value of null
+  // employeeChoices.unshift({ name: "None", value: null });
+
+  const { employeeId, updateId } = await prompt([
+    {
+      type: "list",
+      name: "employeeId",
+      message: "Who is the employee you would like to update?",
+      choices: employeeChoices,
+    },
+    {
+      type: "list",
+      name: "updateId",
+      message: "What would you like to update?",
+      choices: ["first name", "last name", "role", "manager"],
+    },
+  ]);
+
+  console.log(employeeId);
+  // const joesmith = await db.retrieveEmployee(employeeId);
+
+  //need to retrieve employeeId record from employees, need to update with new info
+
+  employee.manager_id = employeeId;
+  console.log("newperson");
+  console.log(employee);
+  await db.addEmployees(employee);
 }
 
 WhatToDo();
