@@ -1,8 +1,9 @@
 const { prompt } = require("inquirer"); //deconstructs inquirer because only use prompt and don't have to type inquirer.prompt
 const db = require("./db"); //defaults to pull index file
-require("console.table");
+
 // console.table([2], ["one", "two"]); //displaying a formatted table in the console
-// alternative console-table-printer node package
+// alternative console-table-printer node package like this:
+require("console.table");
 // const VIEW_EMPLOYEES_BY_DEPARTMENT = "VIEW_EMPLOYEES_BY_DEPARTMENT";
 // const VIEW_EMPLOYEES_BY_MANAGER = "VIEW_EMPLOYEES_BY_MANAGER";
 // const UPDATE_EMPLOYEE_ROLES = "UPDATE_EMPLOYEE_ROLES";
@@ -166,93 +167,106 @@ async function viewDepartment() {
 
 //add calls
 async function addEmployee() {
-  const employees = await db.addEmployees();
-  console.log("\n");
-  console.table(employees);
+  const employees = await db.viewEmployees();
+  const roles = await db.viewRoles();
+  const employee = await prompt([
+    {
+      name: "first_name",
+      message: "What is the employee's first name?",
+    },
+    {
+      name: "last_name",
+      message: "What is the employee's last name?",
+    },
+  ]);
+
+  const roleChoices = roles.map(({ id, title }) => ({
+    name: title,
+    value: id,
+  }));
+
+  const { roleId } = await prompt([
+    {
+      type: "list",
+      name: "roleId",
+      message: "What is the employee's role?",
+      choices: roleChoices,
+    },
+  ]);
+
+  employee.role_id = roleId;
+
+  const managerChoices = employees.map(({ id, first_name, last_name }) => ({
+    name: first_name + " " + last_name,
+    value: id,
+  }));
+
+  //shifts array so zero spot has value of null
+  managerChoices.unshift({ name: "None", value: null });
+
+  const { managerId } = await prompt([
+    {
+      type: "list",
+      name: "managerId",
+      message: "Who is the employee's mnager?",
+      choices: managerChoices,
+    },
+  ]);
+
+  employee.manager_id = managerId;
+  console.log("newperson");
+  console.log(employee);
+  await db.addEmployees(employee);
+
   WhatToDo();
 }
 
 async function addRole() {
-  const roles = await db.addRoles();
-  console.log("\n");
-  console.table(roles);
+  const departments = await db.viewDepartments();
+  const role = await prompt([
+    {
+      name: "title",
+      message: "What is the title of the new role?",
+    },
+    {
+      name: "salary",
+      message: "What is the salary of the new role?",
+    },
+  ]);
+
+  const departmentChoices = departments.map(({ name }) => ({
+    name: name,
+  }));
+
+  const { deptId } = await prompt([
+    {
+      type: "list",
+      name: "deptId",
+      message: "Which department is the role within?",
+      choices: departmentChoices,
+    },
+  ]);
+
+  role.department_id = deptId;
+
+  console.log("newrole");
+  console.log(role);
+  await db.addRoles(role);
+
   WhatToDo();
 }
 
 async function addDepartment() {
-  const departments = await db.addDepartments();
-  console.log("\n");
-  console.table(departments);
+  const department = await prompt([
+    {
+      name: "name",
+      message: "What is the new department?",
+    },
+  ]);
+  console.log("newdept");
+  console.log(department.name);
+  await db.addDepartments(department);
   WhatToDo();
 }
 
 WhatToDo();
-
-// .then(function(answer) { //take this out
-// switch (choice) {
-//   case VIEW_EMPLOYEES:
-//       return viewEmployees() => {}; //"Add a new employee":
-//     // CreateEmployee().then(function(res, err) {
-//     //   WhatToDo();
-//     // });
-//     // break;
-
-//   case ADD_EMPLOYEE: //"Update an employee, role, or department record":
-//     return () => {};
-//add function here
-// WhatToDo();
-// break;
-
-// case VIEW_DEPARTMENTS:
-//     return () => {};
-
-//     case
-//     default:
-//         return () => {}
-
-//   case "Delete an employee, role, or department record":
-//     //add function here
-//     WhatToDo();
-//     break;
-
-//   case "Exit":
-//     connection.end();
-// }
-//       };
-//   }
-
-//   //if use function keyword syntax will be pulled to the top of the file when file is run
-//   async function viewEmployees() {
-//       const employees = await db.findAllEmployees();
-//       console.log("\n");
-//       console.table(employees);
-//       loadMainPrompts();
-
-//   }
-
-//   async function viewDepartments() {
-//       const departments = await db.findAllDepartments();
-//       console.log("\n");
-//       console.table(departments);
-//       loadMainPrompts();
-//   }
-
-//   const employee = prompt()
-
-// const {roleId} = await prompt([
-//     {
-//         type: "list",
-//         name: "roleID",
-//         something: "";
-//         something: "";
-//         employee.role_id = roleID
-
-//     }
-
-//     const managerChoices = employees.map(({ id, first_name, last_name})=> ({ name: `${first_name} ${last_name}`,
-// value: id}));
-
-// managerChoices.unshift({name: "None", value: null});
-// })
-
-//   loadMainPrompts(); //need this here?

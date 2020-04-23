@@ -25,30 +25,53 @@ class DB {
   viewDepartments() {
     return this.connection.query("SELECT * FROM department;");
   }
+  
   //add functions
-  addEmployees() {
-    return this.connection.query("SELECT * FROM employee;");
+  addEmployees(newperson) {
+    console.log("newperson2");
+    console.log(newperson);
+    return this.connection.query(
+      "INSERT INTO employee (first_name, last_name, role_id, manager_id) VALUES (employee.first_name, employee.last_name, employee.role_id, employee.manager_id);"
+    );
   }
 
-  addRoles() {
-    return this.connection.query("SELECT * FROM role;");
+  addRoles(newrole) {
+    return this.connection.query(
+      "INSERT INTO role (title, salary, department_id) VALUES (role.title, role.salary, role.department_id);"
+    );
   }
 
-  addDepartments() {
-    return this.connection.query("SELECT * FROM department;");
-  }
-  //update functions
-  updateEmployees() {
-    return this.connection.query("SELECT * FROM employee;");
+  addDepartments(newdepartment) {
+    return this.connection.query(
+      "INSERT INTO department (name) VALUES (department.name);"
+    );
   }
 
-  updateRoles() {
-    return this.connection.query("SELECT * FROM role;");
-  }
+  //   //update functions
+  //   updateEmployees() {
+  //     return this.connection.query("SELECT * FROM employee;");
+  //   }
 
-  updateDepartments() {
-    return this.connection.query("SELECT * FROM department;");
-  }
+  //   updateRoles() {
+  //     return this.connection.query("SELECT * FROM role;");
+  //   }
+
+  //   updateDepartments() {
+  //     return this.connection.query("SELECT * FROM department;");
+  //   }
+
+  //   //remove functions
+  //   deleteEmployees() {
+  //     return this.connection.query("SELECT * FROM employee;");
+  //   }
+
+  //   deleteRoles() {
+  //     return this.connection.query("SELECT * FROM role;");
+  //   }
+
+  //   deleteDepartments() {
+  //     return this.connection.query("SELECT * FROM department;");
+  //   }
 }
 
 module.exports = new DB(connection);
