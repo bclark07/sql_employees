@@ -24,6 +24,7 @@ async function WhatToDo() {
     message: "What would you like to do?",
     choices: [
       //have an additional choice to select the employee, role, or department you want to update
+      "View an employee, role, or department record",
       "Add an employee, role, or department record",
       "Update an employee, role, or department record",
       "Delete an employee, role, or department record",
@@ -34,23 +35,61 @@ async function WhatToDo() {
   switch (
     choice //stores answers into name, used to be answer.choice
   ) {
+    case "View an employee, role, or department record":
+      console.log("view");
+      const view = await prompt([
+        {
+          name: "WhoView",
+          type: "list",
+          message: "Choose a table to view",
+          choices: ["View an employee", "View a role", "View a department"],
+        },
+      ]).then(async function (view) {
+        // switch statement for view options
+        switch (
+          view.WhoView //stores answers into name, used to be answer.choice
+        ) {
+          case "View an employee":
+            console.log("vemployee");
+            return viewEmployee();
+          case "View a role":
+            console.log("vrole");
+            return viewRole();
+          case "View a department":
+            console.log("vdepartment");
+            return viewDepartment();
+        }
+      });
+      break;
     case "Add an employee, role, or department record":
       console.log("add");
-      return viewEmployees();
-    // const add = await prompt([
-    //   {
-    //     name: "WhoAdd",
-    //     type: "list",
-    //     message: "Choose a role to add",
-    //     choices: ["Add an employee", "Add a role", "Add a department"],
-    //   },
-    // ]).then(async function (add) {
-    //   // console.log(Add(add.WhoAdd));
-    //   console.log(WhoAdd);
-    // });
-    // // WhatToDo();
-    // // return add;
-    // break;
+      // return viewEmployees();
+      const add = await prompt([
+        {
+          name: "WhoAdd",
+          type: "list",
+          message: "Choose a role to add",
+          choices: ["Add an employee", "Add a role", "Add a department"],
+        },
+      ]).then(async function (add) {
+        // switch statement for add options
+        switch (
+          add.WhoAdd //stores answers into name, used to be answer.choice
+        ) {
+          case "Add an employee":
+            console.log("employee");
+            return addEmployee();
+          case "Add a role":
+            console.log("role");
+            return addRole();
+          case "Add a department":
+            console.log("department");
+            return addDepartment();
+        }
+      });
+      // WhatToDo();
+      // return add;
+      break;
     case "Update an employee, role, or department record":
       console.log("update");
       // class Server extends Update {
@@ -96,10 +135,54 @@ async function WhatToDo() {
   }
 }
 
-async function viewEmployees() {
-  const employees = await db.findAllEmployees();
+// async function viewEmployees() {
+//   const employees = await db.findAllEmployees();
+//   console.log("\n");
+//   console.table(employees);
+//   WhatToDo();
+// }
+
+//view calls
+async function viewEmployee() {
+  const employees = await db.viewEmployees();
   console.log("\n");
   console.table(employees);
+  WhatToDo();
+}
+
+async function viewRole() {
+  const roles = await db.viewRoles();
+  console.log("\n");
+  console.table(roles);
+  WhatToDo();
+}
+
+async function viewDepartment() {
+  const departments = await db.viewDepartments();
+  console.log("\n");
+  console.table(departments);
+  WhatToDo();
+}
+
+//add calls
+async function addEmployee() {
+  const employees = await db.addEmployees();
+  console.log("\n");
+  console.table(employees);
+  WhatToDo();
+}
+
+async function addRole() {
+  const roles = await db.addRoles();
+  console.log("\n");
+  console.table(roles);
+  WhatToDo();
+}
+
+async function addDepartment() {
+  const departments = await db.addDepartments();
+  console.log("\n");
+  console.table(departments);
   WhatToDo();
 }
 
