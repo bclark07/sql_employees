@@ -84,7 +84,32 @@ async function WhatToDo() {
     // case "Update an employee, role, or department record":
     case "Update an employee record":
       console.log("update");
-      return updateEmployee();
+
+      const update = await prompt([
+        {
+          name: "WhatUpdate",
+          type: "list",
+          message: "Choose what you would like to update",
+          choices: [
+            "Update an employee's role",
+            "Update an employee's manager",
+          ],
+        },
+      ]).then(async function (update) {
+        // switch statement for add options
+        switch (
+          update.WhatUpdate //stores answers into name, used to be answer.choice
+        ) {
+          case "Update an employee's role":
+            console.log("uprole");
+            return updateEmployeeRole();
+          case "Update an employee's manager":
+            console.log("upmanager");
+            return updateEmployeeManager();
+        }
+      });
+      break;
+
     // const change = await prompt([
     //   {
     //     name: "WhoUpdate",
@@ -252,9 +277,9 @@ async function addDepartment() {
   WhatToDo();
 }
 
-//update function
+//update functions
 
-async function updateEmployee() {
+async function updateEmployeeRole() {
   const employees = await db.viewEmployees();
   const roles = await db.viewRoles();
 
@@ -309,7 +334,47 @@ async function updateEmployee() {
 
   console.log("newupdate");
   console.log(employeeId, roleId);
-  await db.updateEmployees(employeeId, roleId);
+  await db.updateEmployeesRole(employeeId, roleId);
+
+  WhatToDo();
+}
+
+async function updateEmployeeManager() {
+  const employees = await db.viewEmployees();
+
+  const employeeChoices = employees.map(({ id, first_name, last_name }) => ({
+    name: first_name + " " + last_name,
+    value: id,
+  }));
+
+  const { employeeId } = await prompt([
+    {
+      type: "list",
+      name: "employeeId",
+      message: "Which employee's manager would you like to update?",
+      choices: employeeChoices,
+    },
+  ]);
+
+  const managerChoices = employees.map(({ id, first_name, last_name }) => ({
+    name: first_name + " " + last_name,
+    value: id,
+  }));
+
+  //shifts array so zero spot has value of null
+  managerChoices.unshift({ name: "None", value: null });
+
+  const { managerId } = await prompt([
+    {
+      type: "list",
+      name: "managerId",
+      message: "Who is the employee's mnager?",
+      choices: managerChoices,
+    },
+  ]);
+
+  console.log(employeeId, managerId);
+  await db.updateEmployeesManager(employeeId, managerId);
 
   WhatToDo();
 }

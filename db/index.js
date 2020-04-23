@@ -48,10 +48,17 @@ class DB {
 
   // update functions
 
-  updateEmployees(employeeId, roleId) {
+  updateEmployeesRole(employeeId, roleId) {
     return this.connection.query(
       "UPDATE employee SET role_id = ? WHERE id = ?",
       [roleId, employeeId]
+    );
+  }
+
+  updateEmployeesManager(employeeId, managerId) {
+    return this.connection.query(
+      "UPDATE employee SET manager_id = ? WHERE id = ?",
+      [managerId, employeeId]
     );
   }
 
