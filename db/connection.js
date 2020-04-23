@@ -9,12 +9,8 @@ const connection = mysql.createConnection({
   database: "employee_tracker",
 });
 
-//this is telling to wait until connection is made
-connection.connect(function (err) {
-  if (err) throw err;
-  WhatToDo();
-  connection.end();
-});
+connection.connect();
+
 
 // Setting up connection.query to use promises instead of callbacks
 // This allows us to use the async/await syntax

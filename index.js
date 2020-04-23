@@ -1,6 +1,6 @@
 const { prompt } = require("inquirer"); //deconstructs inquirer because only use prompt and don't have to type inquirer.prompt
-
-// const db = require("./db"); //defaults to pull index file
+const db = require("./db"); //defaults to pull index file
+require("console.table");
 // console.table([2], ["one", "two"]); //displaying a formatted table in the console
 // alternative console-table-printer node package
 // const VIEW_EMPLOYEES_BY_DEPARTMENT = "VIEW_EMPLOYEES_BY_DEPARTMENT";
@@ -16,7 +16,7 @@ async function WhatToDo() {
   //loadMainPrompts in example
 
   // reference 44:30 in video if want to add const variables that are stored as values in choices array with questions object
-  // deconstruct choice out of the object becasue don't need anything else - choice from line 21
+  // deconstruct choice out of the object becasue don't need anything else - choice from line 22
   const { choice } = await prompt({
     //response instead of answers in example
     name: "choice",
@@ -36,19 +36,21 @@ async function WhatToDo() {
   ) {
     case "Add an employee, role, or department record":
       console.log("add");
-      const add = await prompt([
-        {
-          name: "WhoAdd",
-          type: "list",
-          message: "Choose a role to add",
-          choices: ["Add an employee", "Add a role", "Add a department"],
-        },
-      ]).then(async function (add) {
-        console.log(Add(add.WhoAdd));
-      });
-      // WhatToDo();
-      // return add;
-      break;
+      return viewEmployees();
+    // const add = await prompt([
+    //   {
+    //     name: "WhoAdd",
+    //     type: "list",
+    //     message: "Choose a role to add",
+    //     choices: ["Add an employee", "Add a role", "Add a department"],
+    //   },
+    // ]).then(async function (add) {
+    //   // console.log(Add(add.WhoAdd));
+    //   console.log(WhoAdd);
+    // });
+    // // WhatToDo();
+    // // return add;
+    // break;
     case "Update an employee, role, or department record":
       console.log("update");
       // class Server extends Update {
@@ -89,8 +91,16 @@ async function WhatToDo() {
       // return remove;
       break;
     case "Exit":
-      connection.end();
+      console.log("exit");
+      db.connection.end();
   }
+}
+
+async function viewEmployees() {
+  const employees = await db.findAllEmployees();
+  console.log("\n");
+  console.table(employees);
+  WhatToDo();
 }
 
 WhatToDo();
