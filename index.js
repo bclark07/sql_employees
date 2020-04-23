@@ -256,39 +256,62 @@ async function addDepartment() {
 
 async function updateEmployee() {
   const employees = await db.viewEmployees();
+  const roles = await db.viewRoles();
 
   const employeeChoices = employees.map(({ id, first_name, last_name }) => ({
     name: first_name + " " + last_name,
     value: id,
   }));
 
-  //shifts array so zero spot has value of null
-  // employeeChoices.unshift({ name: "None", value: null });
+  // for updating anything
+  // const { employeeId, updateId } = await prompt([
+  //   {
+  //     type: "list",
+  //     name: "employeeId",
+  //     message: "Who is the employee you would like to update?",
+  //     choices: employeeChoices,
+  //   },
+  //   {
+  //     type: "list",
+  //     name: "updateId",
+  //     message: "What would you like to update?",
+  //     choices: ["first name", "last name", "role", "manager"],
+  //   },
+  // ]);
 
-  const { employeeId, updateId } = await prompt([
+  //if just updating role
+  const { employeeId } = await prompt([
     {
       type: "list",
       name: "employeeId",
-      message: "Who is the employee you would like to update?",
+      message: "Which employee's role would you like to update?",
       choices: employeeChoices,
     },
+  ]);
+
+  const roleChoices = roles.map(({ id, title }) => ({
+    name: title,
+    value: id,
+  }));
+
+  const { roleId } = await prompt([
     {
       type: "list",
-      name: "updateId",
-      message: "What would you like to update?",
-      choices: ["first name", "last name", "role", "manager"],
+      name: "roleId",
+      message: "What is the employee's new role?",
+      choices: roleChoices,
     },
   ]);
 
   console.log(employeeId);
-  // const joesmith = await db.retrieveEmployee(employeeId);
 
   //need to retrieve employeeId record from employees, need to update with new info
 
-  employee.manager_id = employeeId;
-  console.log("newperson");
-  console.log(employee);
-  await db.addEmployees(employee);
+  console.log("newupdate");
+  console.log(employeeId, roleId);
+  await db.updateEmployees(employeeId, roleId);
+
+  WhatToDo();
 }
 
 WhatToDo();

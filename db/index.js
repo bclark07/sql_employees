@@ -39,15 +39,20 @@ class DB {
     return this.connection.query("INSERT INTO department SET ?", newdepartment);
   }
 
-  //   //update functions
-  retrieveEmployees(employeeId) {
-    return this.connection.query(
-      "SELECT * FROM employee WHERE employee.id = employeeId;"
-    );
-  }
+  //   //if want to update from a choice of all options
+  // retrieveEmployees(employeeId) {
+  //   return this.connection.query(
+  //     "SELECT * FROM employee WHERE employee.id = employeeId;"
+  //   );
+  // }
 
-  updateEmployees() {
-    return this.connection.query("SELECT * FROM employee;");
+  // update functions
+
+  updateEmployees(employeeId, roleId) {
+    return this.connection.query(
+      "UPDATE employee SET role_id = ? WHERE id = ?",
+      [roleId, employeeId]
+    );
   }
 
   //   updateRoles() {
